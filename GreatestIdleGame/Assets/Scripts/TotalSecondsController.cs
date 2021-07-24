@@ -5,8 +5,11 @@ using UnityEngine;
 public class TotalSecondsController : MonoBehaviour
 {
     [SerializeField] private TMPro.TextMeshProUGUI totalSecondsText;
+    [SerializeField] private TimeManager timeManager;
+
+
     private void Update()
     {
-        totalSecondsText.text = "Total seconds doing nothing: " + Time.time.ToString("F0");
+        totalSecondsText.text = "Total seconds doing nothing: " + (timeManager.totalSecondsPlayedSinceStart + Time.time).ToString("F0");
     }
 }
