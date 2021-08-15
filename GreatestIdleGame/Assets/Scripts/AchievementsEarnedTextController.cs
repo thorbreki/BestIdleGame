@@ -4,17 +4,12 @@ using UnityEngine;
 
 public class AchievementsEarnedTextController : MonoBehaviour
 {
-    [SerializeField] private int hi;
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    [SerializeField] private TMPro.TextMeshProUGUI AchievementsText;
+    [SerializeField] private TimeManager timeManager;
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        
+        AchievementsText.text = timeManager.GetAchievementsEarned().ToString() + " achievements earned";
     }
 }

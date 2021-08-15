@@ -10,6 +10,6 @@ public class TotalSecondsController : MonoBehaviour
 
     private void Update()
     {
-        totalSecondsText.text = (timeManager.totalSecondsPlayedSinceStart + Time.time).ToString("F0") + " seconds doing nothing";
+        totalSecondsText.text = Mathf.FloorToInt((timeManager.totalSecondsPlayedSinceStart + Time.time)).ToString() + " seconds doing nothing";
     }
 }

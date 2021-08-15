@@ -30,7 +30,7 @@ public class ProgressBarController : MonoBehaviour
     private void UpdateProgressBar()
     {
         // The scale of the progress bar is the time already passed (in this current level) divided by the seconds needed
-        scaleVector.x = (Time.time + timeManager.totalSecondsPlayedSinceStart) / numOfSecondsToNextLevel;
+        scaleVector.x = (timeManager.totalSecondsPlayedSinceStart + Time.time) / numOfSecondsToNextLevel;
         transform.localScale = scaleVector;
 
         // WHEN PLAYER GOES UP A LEVEL:
@@ -38,6 +38,11 @@ public class ProgressBarController : MonoBehaviour
         {
             UpgradeToNextAchievement();
         }
+    }
+
+    public void TestPrint()
+    {
+        print("The current time in ProgressBarController: " + Time.time);
     }
 
     /// <summary>
