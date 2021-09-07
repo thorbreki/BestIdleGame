@@ -5,7 +5,7 @@ using UnityEngine;
 public class AchievementsTextController : MonoBehaviour
 {
     // SERIALIZED VARIABLES
-    private float lerpIterationAmount = 0.00005f; // How much the achievements text travels up in each iteration
+    private float lerpIterationAmount = 0.005f; // How much the achievements text travels up in each iteration
     // COROUTINE OBJECTS
     private Coroutine lerpUpCoroutine;
 
@@ -29,7 +29,7 @@ public class AchievementsTextController : MonoBehaviour
         while (t < 1)
         {
             transform.position = Vector3.Lerp(transform.position, targetPosition, t);
-            t += lerpIterationAmount;
+            t += lerpIterationAmount * Time.deltaTime;
             yield return null;
         }
     }

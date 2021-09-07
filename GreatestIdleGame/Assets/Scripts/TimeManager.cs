@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,6 +9,7 @@ public class TimeManager : MonoBehaviour
 
     [SerializeField] private ProgressBarController progressBarController; // The controller for the progress bar
     [SerializeField] private AchievementsTextController achievementsTextController; // The controller for the achievements text
+    [SerializeField] private GameObject blackOverlay; // The overlay for the screen
 
     private int numberOfAchievementsEarned = 0; // How many achievements the player has earned
 
@@ -15,6 +17,9 @@ public class TimeManager : MonoBehaviour
 
     private void Start()
     {
+        // Make sure that the overlay is inactive
+        blackOverlay.SetActive(false);
+
         // Create the achievement array
         CreateAchievementArray();
 
@@ -26,17 +31,26 @@ public class TimeManager : MonoBehaviour
 
         // Update the progress bar to the state it was in when the player last turned off the game
         progressBarController.SetNumOfSecondsToNextLevel(achievementArr[numberOfAchievementsEarned]);
+
+        // Update the achievements texts so that they are in the correct position to show the current achievement being earned
+        achievementsTextController.transform.position = new Vector3(achievementsTextController.transform.position.x, numberOfAchievementsEarned * 2.3f, achievementsTextController.transform.position.z);
+
+        StartCoroutine(SavePlayerPrefs());
+
     }
 
     private void OnApplicationQuit()
     {
         // Save how many seconds the player has played to the system so you can load it up later
-        //PlayerPrefs.SetInt(nameof(totalSecondsPlayedSinceStart), ((int)Time.time) + totalSecondsPlayedSinceStart);
+        PlayerPrefs.SetInt(nameof(totalSecondsPlayedSinceStart), ((int)Time.time) + totalSecondsPlayedSinceStart);
 
         // Save how many ahcievements the player has recieved to easily figure out the player's progress
-        //PlayerPrefs.SetInt(nameof(numberOfAchievementsEarned), numberOfAchievementsEarned);
+        PlayerPrefs.SetInt(nameof(numberOfAchievementsEarned), numberOfAchievementsEarned);
+
+        PlayerPrefs.Save();
 
         //PlayerPrefs.DeleteKey(nameof(totalSecondsPlayedSinceStart)); // ----------DEBUG
+        //PlayerPrefs.DeleteKey(nameof(numberOfAchievementsEarned)); // -----------DEBUG
     }
 
     /// <summary>
@@ -44,9 +58,16 @@ public class TimeManager : MonoBehaviour
     /// </summary>
     public void UpgradeToNextAchievement()
     {
-        numberOfAchievementsEarned++; // The player just earned a new achievement obviously
-        progressBarController.SetNumOfSecondsToNextLevel(achievementArr[numberOfAchievementsEarned]); // Tell the progress bar how many seconds needed to earn achievement
-        achievementsTextController.MoveUpOneAchievement(); // Tell the achievements text that it should move up by one achievement
+        try
+        {
+            numberOfAchievementsEarned++; // The player just earned a new achievement obviously
+            progressBarController.SetNumOfSecondsToNextLevel(achievementArr[numberOfAchievementsEarned]); // Tell the progress bar how many seconds needed to earn achievement
+            achievementsTextController.MoveUpOneAchievement(); // Tell the achievements text that it should move up by one achievement
+        } catch (IndexOutOfRangeException e)
+        {
+            blackOverlay.SetActive(true);
+            Application.Quit();
+        }
     }
 
     /// <summary>
@@ -63,7 +84,7 @@ public class TimeManager : MonoBehaviour
     /// </summary>
     private void CreateAchievementArray()
     {
-        achievementArr = new int[32]
+        achievementArr = new int[37]
         {
             10, // 10 seconds
             20, // 20 seconds
@@ -97,6 +118,24 @@ public class TimeManager : MonoBehaviour
             1209600, // 2 weeks
             1814400, // 3 weeks
             2592000, // 1 month
+            5184000, // 2 months
+            7776000, // 3 months
+            15724800, // 6 months
+            23630400, // 9 months
+            31536000, // 12 months
         };
+    }
+
+    private IEnumerator SavePlayerPrefs()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(5f);
+            // Save how many seconds the player has played to the system so you can load it up later
+            PlayerPrefs.SetInt(nameof(totalSecondsPlayedSinceStart), ((int)Time.time) + totalSecondsPlayedSinceStart);
+
+            // Save how many ahcievements the player has recieved to easily figure out the player's progress
+            PlayerPrefs.SetInt(nameof(numberOfAchievementsEarned), numberOfAchievementsEarned);
+        }
     }
 }
